@@ -48,6 +48,24 @@ class CatSerializer(DynamicModelSerializer):
         untrimmed_fields = ('name',)
 
 
+class CatSerializer2(DynamicModelSerializer):
+    home = DynamicRelationField('LocationSerializer', link=None)
+    backup_home = DynamicRelationField(
+        'LocationSerializer', link=backup_home_link)
+    foobar = DynamicRelationField(
+        'LocationSerializer', source='hunting_grounds', many=True)
+    parent_id = DynamicRelationField('CatSerializer2', source='parent', read_only=True)
+    parent = DynamicRelationField('CatSerializer2', embed=True, deferred=True, read_only=True)
+
+    class Meta:
+        model = Cat
+        name = 'cat'
+        fields = ('id', 'name', 'home', 'backup_home', 'foobar', 'parent_id', 'parent')
+        deferred_fields = ('home', 'backup_home', 'foobar', 'parent')
+        immutable_fields = ('name',)
+        untrimmed_fields = ('name',)
+
+
 class LocationSerializer(DynamicModelSerializer):
 
     class Meta:

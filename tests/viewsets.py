@@ -16,6 +16,7 @@ from tests.models import (
 )
 from tests.serializers import (
     CarSerializer,
+    CatSerializer2,
     CatSerializer,
     DogSerializer,
     GroupSerializer,
@@ -144,6 +145,11 @@ class ProfileViewSet(DynamicModelViewSet):
 
 class CatViewSet(DynamicModelViewSet):
     serializer_class = CatSerializer
+    queryset = Cat.objects.all()
+
+
+class CatViewSet2(DynamicModelViewSet):
+    serializer_class = CatSerializer2
     queryset = Cat.objects.all()
 
 
