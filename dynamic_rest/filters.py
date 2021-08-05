@@ -1,6 +1,5 @@
 """This module contains custom filter backends."""
 
-from django.conf import settings as django_settings
 from django.core.exceptions import ValidationError as InternalValidationError
 from django.core.exceptions import ImproperlyConfigured
 from django.db.models import Q, Prefetch, Manager
@@ -420,7 +419,7 @@ class DynamicFilterBackend(BaseFilterBackend):
             # not conflict.
             required = requirements.pop(source, None)
 
-            if recursion_depth < django_settings.MAX_RECURSION_DEPTH:
+            if recursion_depth < settings.MAX_RECURSION_DEPTH:
                 prefetch_queryset = self._build_queryset(
                     serializer=field,
                     filters=filters.get(name, {}),

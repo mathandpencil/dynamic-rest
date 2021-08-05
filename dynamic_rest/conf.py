@@ -72,6 +72,10 @@ DYNAMIC_REST = {
     # Enables caching of serializer fields to speed up serializer usage
     # Needs to also be configured on a per-serializer basis
     'ENABLE_FIELDS_CACHE': False,
+
+    # Controls maximum recursion depth to prevent infinite recursion
+    # in cases where two DynamicRelationFields interfere with each other
+    MAX_RECURSION_DEPTH: 5
 }
 
 
