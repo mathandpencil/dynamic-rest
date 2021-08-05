@@ -65,3 +65,5 @@ DYNAMIC_REST = {
     'ENABLE_LINKS': True,
     'DEBUG': os.environ.get('DYNAMIC_REST_DEBUG', 'false').lower() == 'true'
 }
+
+MAX_RECURSION_DEPTH = 5

@@ -378,7 +378,8 @@ class DynamicFilterBackend(BaseFilterBackend):
         requirements,
         model,
         fields,
-        filters
+        filters,
+        recursion_depth=0
     ):
         """Build a prefetch dictionary based on request requirements."""
 
@@ -418,22 +419,24 @@ class DynamicFilterBackend(BaseFilterBackend):
             # not conflict.
             required = requirements.pop(source, None)
 
-            prefetch_queryset = self._build_queryset(
-                serializer=field,
-                filters=filters.get(name, {}),
-                queryset=related_queryset,
-                requirements=required
-            )
+            if recursion_depth < settings.MAX_RECURSION_DEPTH:
+                prefetch_queryset = self._build_queryset(
+                    serializer=field,
+                    filters=filters.get(name, {}),
+                    queryset=related_queryset,
+                    requirements=required,
+                    recursion_depth=recursion_depth + 1
+                )
 
-            # Note: There can only be one prefetch per source, even
-            #       though there can be multiple fields pointing to
-            #       the same source. This could break in some cases,
-            #       but is mostly an issue on writes when we use all
-            #       fields by default.
-            prefetches[source] = self._create_prefetch(
-                source,
-                prefetch_queryset
-            )
+                # Note: There can only be one prefetch per source, even
+                #       though there can be multiple fields pointing to
+                #       the same source. This could break in some cases,
+                #       but is mostly an issue on writes when we use all
+                #       fields by default.
+                prefetches[source] = self._create_prefetch(
+                    source,
+                    prefetch_queryset
+                )
 
         return prefetches
 
@@ -477,6 +480,7 @@ class DynamicFilterBackend(BaseFilterBackend):
         requirements=None,
         extra_filters=None,
         disable_prefetches=False,
+        recursion_depth=0,
     ):
         """Build a queryset that pulls in all data required by this request.
 
@@ -539,7 +543,8 @@ class DynamicFilterBackend(BaseFilterBackend):
             requirements,
             model,
             fields,
-            filters
+            filters,
+            recursion_depth=recursion_depth + 1
         )
 
         # build remaining prefetches out of internal requirements
